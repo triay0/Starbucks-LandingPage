@@ -14,7 +14,7 @@ class HomeScreen extends StatelessWidget {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        //color: kBackgroundColor,
+        color: kBackgroundColor,
         child: SafeArea(
           child: Column(
             children: [

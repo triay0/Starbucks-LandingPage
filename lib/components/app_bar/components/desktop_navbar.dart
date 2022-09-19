@@ -11,42 +11,45 @@ class DesktopNavbar extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     const height = 100.0;
     return Container(
-      color: Colors.blue[800],
+      color: Color.fromRGBO(61, 164, 220, 1.0),
 
       alignment: Alignment.center,
       padding: EdgeInsets.symmetric(
           vertical: 20.0,
           horizontal: width > 850 ? (width * 0.07) : (width * 0.05)),
       height: height,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          //logo
-          const Header(),
-          //navbar_items
-          const SizedBox(
-            height: 30,
-            child: NavbarItems(),
-          ),
-
-          //trailing
-          if (width >= 1100)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SearchButton(),
-                const SizedBox(width: 10.0),
-                IconButton(
-                  icon: const Icon(
-                    Icons.lock_outline,
-                    color: Colors.black,
-                    size: 25.0,
-                  ),
-                  onPressed: () {},
-                ),
-              ],
+      child: Visibility(
+        visible: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            //logo
+            const Header(),
+            //navbar_items
+            const SizedBox(
+              height: 30,
+              child: NavbarItems(),
             ),
-        ],
+
+            //trailing
+            if (width >= 1100)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SearchButton(),
+                  const SizedBox(width: 10.0),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.lock_outline,
+                      color: Colors.black,
+                      size: 25.0,
+                    ),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }

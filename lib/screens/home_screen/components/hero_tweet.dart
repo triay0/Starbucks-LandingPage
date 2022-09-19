@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dynamic_text_highlighting/dynamic_text_highlighting.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,7 +35,8 @@ class _HeroTweetState extends State<HeroTweet> {
       margin: const EdgeInsets.all(15.0),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-          color: Colors.white, border: Border.all(color: Colors.grey)),
+          color: Theme.of(context).cardColor,
+          border: Border.all(color: Colors.grey)),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,9 +55,11 @@ class _HeroTweetState extends State<HeroTweet> {
               Visibility(
                   visible: widget.tweet.profile.image2 != Uint8List(8),
                   child: Container(
-                width: 48,
-                child: CircleAvatar(backgroundImage: MemoryImage(widget.tweet.profile.image2)),
-              )),
+                    width: 48,
+                    child: CircleAvatar(
+                        backgroundImage:
+                            MemoryImage(widget.tweet.profile.image2)),
+                  )),
               const SizedBox(
                 width: 10,
               ),
@@ -72,7 +73,6 @@ class _HeroTweetState extends State<HeroTweet> {
                       AutoSizeText(
                         widget.tweet.profile.name,
                         style: const TextStyle(
-                          color: Colors.black,
                           fontSize: 15.0,
                           fontWeight: FontWeight.w700,
                           fontFamily: 'Chirp',
@@ -100,7 +100,10 @@ class _HeroTweetState extends State<HeroTweet> {
                 ],
               ),
               const Spacer(),
-              const Icon(Icons.more_horiz)
+              const Icon(
+                Icons.more_horiz,
+                color: Colors.grey,
+              )
             ]),
             const SizedBox(
               height: 20,
@@ -141,50 +144,73 @@ class _HeroTweetState extends State<HeroTweet> {
               padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
               child: Row(
                 children: [
-                  Text(
-                    widget.tweet.numRT.toString(),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      fontFamily: 'Chirp',
-                    ),
-                  ),
-                  Container(
-                      margin: const EdgeInsets.only(left: 5.0),
-                      child: const Text("Retweets")),
-                  const SizedBox(
-                    width: 30,
-                  ),
-                  const Text(
-                    "560",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'Chirp'),
-                  ),
-                  Container(
-                      margin: const EdgeInsets.only(left: 5.0),
-                      child: const Text("Quote Tweets")),
-                  const SizedBox(
-                    width: 30,
-                  ),
-                  Text(
-                    widget.tweet.numLikes.toString(),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      fontFamily: 'Chirp',
-                    ),
-                  ),
-                  Container(
-                      margin: const EdgeInsets.only(left: 5.0),
-                      child: const Text(
-                        "Likes",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Chirp',
+                  Visibility(
+                    visible:
+                        widget.tweet.numRT != 0 && !widget.tweet.numRT.isNaN,
+                    child: Row(
+                      children: [
+                        Text(
+                          widget.tweet.numRT.toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            fontFamily: 'Chirp',
+                          ),
                         ),
-                      )),
+                        Container(
+                            margin: const EdgeInsets.only(left: 5.0),
+                            child: const Text("Retweets")),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    visible: widget.tweet.numQuotes != 0 &&
+                        !widget.tweet.numQuotes.isNaN,
+                    child: Row(
+                      children: [
+                        Text(
+                          widget.tweet.numQuotes.toString(),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              fontFamily: 'Chirp'),
+                        ),
+                        Container(
+                            margin: const EdgeInsets.only(left: 5.0),
+                            child: const Text("Quote Tweets")),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    visible: widget.tweet.numLikes != 0 &&
+                        !widget.tweet.numLikes.isNaN,
+                    child: Row(
+                      children: [
+                        Text(
+                          widget.tweet.numLikes.toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Container(
+                            margin: const EdgeInsets.only(left: 5.0),
+                            child: const Text(
+                              "Likes",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Chirp',
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
                   const SizedBox(
                     width: 0.1,
                   )
@@ -243,8 +269,6 @@ class _HeroTweetState extends State<HeroTweet> {
           ]),
     );
   }
-
-
 }
 
 Widget buildTweetContent(String text) {
@@ -267,20 +291,17 @@ Widget buildTweetContent(String text) {
     } else {
       list.add(TextSpan(
           text: word + " ",
-          style: const TextStyle(
-              fontSize: 23.0, fontFamily: 'Chirp', color: Colors.black)));
+          style: const TextStyle(fontSize: 23.0, fontFamily: 'Chirp')));
     }
   }
   var text2 = RichText(
     text: TextSpan(
         text: '',
-        style: const TextStyle(
-            color: Colors.grey, fontSize: 20, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         children: list),
   );
   return text2;
 }
-
 
 Widget buildDTH(String text, List<String> highlights) {
   return DynamicTextHighlighting(

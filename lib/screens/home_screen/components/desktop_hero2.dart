@@ -1,12 +1,14 @@
+import 'dart:convert';
+import 'dart:html' as sas;
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:starbucks_landing_page/screens/home_screen/components/theme_changer.dart';
 
-import 'app_themes.dart';
 import 'class/Tweet.dart';
 import 'hero_tweet.dart';
 
@@ -18,19 +20,20 @@ class DesktopHero extends StatefulWidget {
 }
 
 class _DesktopHeroState extends State<DesktopHero> {
+  ScreenshotController screenshotController = ScreenshotController();
 
   late var nameController = TextEditingController();
   late var usernameController = TextEditingController();
 
   late var contentController = TextEditingController();
+  late var quotesController = TextEditingController();
   late var likesController = TextEditingController();
   late var rtController = TextEditingController();
   late var twitterClientController = TextEditingController();
 
   late Tweet tweet;
   late Uint8List webImage;
-  int val = -1;
-
+  int val = 1;
 
   @override
   void initState() {
@@ -40,6 +43,7 @@ class _DesktopHeroState extends State<DesktopHero> {
         Profile(false, "test", "testNick", File(""), webImage),
         "Tweet Content #hashtag1",
         "Tweet Content #hashtag1",
+        200,
         50,
         400,
         DateTime.now(),
@@ -47,9 +51,11 @@ class _DesktopHeroState extends State<DesktopHero> {
         false);
     rtController.text = "400";
     likesController.text = "50";
-    nameController.text = "50";
-    usernameController.text = "50";
+    quotesController.text = "200";
+    nameController.text = "YourName";
+    usernameController.text = "@test";
     twitterClientController.text = "Twitter Web";
+    contentController.text = "Tweet Content #hastag1";
 
     nameController.addListener(() {
       setState(() {
@@ -70,6 +76,12 @@ class _DesktopHeroState extends State<DesktopHero> {
     likesController.addListener(() {
       setState(() {
         tweet.numLikes = int.parse(likesController.text.toString());
+      });
+    });
+
+    quotesController.addListener(() {
+      setState(() {
+        tweet.numQuotes = int.parse(quotesController.text.toString());
       });
     });
 
@@ -95,7 +107,7 @@ class _DesktopHeroState extends State<DesktopHero> {
 
   @override
   Widget build(BuildContext context) {
-    var _themeProvider=Provider.of<ThemeChanger>(context);
+    var _themeProvider = Provider.of<ThemeChanger>(context);
     final mediaQuery = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Padding(
@@ -107,169 +119,289 @@ class _DesktopHeroState extends State<DesktopHero> {
           children: [
             const SizedBox(height: 75.0),
             Row(
-              mainAxisSize: MainAxisSize.min,
+              //mainAxisSize: MainAxisSize.min,
               children: [
                 Expanded(
-                  child: HeroTweet(tweet: tweet),
-                ),
-                Container(
-                  width: 300,
                   child: Column(
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          ListTile(
-                            title: Text("Light"),
-                            leading: Radio(
-                              value: 1,
-                              groupValue: val,
-                              onChanged: (value) {
-                                setState(() {
-                                  val = value as int;
-                                  _themeProvider.setTheme(lightTheme);
+                      MaterialButton(
+                        onPressed: () => {
+                          screenshotController
+                              .capture()
+                              .then((Uint8List? image) {
+                            if (image != null) {
+                              final _base64 = base64Encode(image!);
+                              final anchor = sas.AnchorElement(
+                                  href:
+                                      'data:application/octet-stream;base64,$_base64')
+                                ..download = "image.png"
+                                ..target = 'blank';
 
-                                });
-                              },
-                              activeColor: Colors.green,
-                            ),
-                          ),
-                          ListTile(
-                            title: Text("Dark Dim"),
-                            leading: Radio(
-                              value: 2,
-                              groupValue: val,
-                              onChanged: (value) {
-                                setState(() {
-                                  val = value as int;
-                                  _themeProvider.setTheme(darkTheme);
-
-                                });
-                              },
-                              activeColor: Colors.green,
-                            ),
-                          ),
-                          ListTile(
-                            title: Text("Dark Lights out"),
-                            leading: Radio(
-                              value: 3,
-                              groupValue: val,
-                              onChanged: (value) {
-                                setState(() {
-                                  val = value as int;
-                                });
-                              },
-                              activeColor: Colors.green,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text("Profile Image"),
-                      ElevatedButton(
-                          child: Text("Choose File"),
-                          onPressed: () async {
-                            _pickImage();
-                          }),
-                      TextField(
-                        controller: nameController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text('Name'),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                        controller: usernameController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text('Username'),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CheckboxListTile(
-                          title: Text("Verified user"),
-                          value: tweet.profile.verified,
-                          onChanged: (newValue) {
-                            setState(() {
-                              tweet.profile.verified = newValue!;
-                            });
-                          }),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                        controller: likesController,
-                        decoration: const InputDecoration(
-                          label: Text('Num Likes'),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                        controller: rtController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text('Num RT'),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                        controller: contentController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text('Tweet Content'),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                        controller: twitterClientController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text('Tweeter Client'),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      ElevatedButton(
-                          child: Text("date"),
-                          onPressed: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                //get today's date
-                                firstDate: DateTime(2000),
-                                //DateTime.now() - not to allow to choose before today.
-                                lastDate: DateTime(2101));
-
-                            if (pickedDate != null) {
-                              setState(() {
-                                tweet.date = pickedDate;
-                              });
+                              sas.document.body!.append(anchor);
+                              anchor.click();
+                              anchor.remove();
                             }
-                          }),
-                      const SizedBox(
-                        height: 10,
+                          }).catchError((onError) {
+                            print(onError);
+                          })
+                        },
+                        child: Text("Save Tweet"),
                       ),
-                      CheckboxListTile(
-                          title: Text("Twitter Circle"),
-                          value: tweet.circle,
-                          onChanged: (newValue) {
-                            setState(() {
-                              tweet.circle = newValue!;
-                            });
-                          }),
+                      Screenshot(
+                          controller: screenshotController,
+                          child: HeroTweet(tweet: tweet)),
                     ],
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          children: [
+                            const Text("Switch Theme:",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.white)),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.all(0),
+                                    title: Text("Light"),
+                                    leading: Radio(
+                                      value: 1,
+                                      groupValue: val,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          val = value as int;
+                                          _themeProvider.setTheme(lightTheme);
+                                        });
+                                      },
+                                      activeColor: Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.all(0),
+                                    title: Text("Dark Dim"),
+                                    leading: Radio(
+                                      value: 2,
+                                      groupValue: val,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          val = value as int;
+                                          _themeProvider.setTheme(darkTheme);
+                                        });
+                                      },
+                                      activeColor: Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.all(0),
+                                    title: Text("Dark Lights out"),
+                                    leading: Radio(
+                                      value: 3,
+                                      groupValue: val,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          val = value as int;
+                                        });
+                                        _themeProvider
+                                            .setTheme(darkLightsOutTheme);
+                                      },
+                                      activeColor: Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text("Profile:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.white)),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Image:",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            ElevatedButton(
+                                child: Text("Choose File"),
+                                onPressed: () async {
+                                  _pickImage();
+                                }),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: nameController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  label: Text('Name'),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: usernameController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  label: Text('Username'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        CheckboxListTile(
+                            title: Text("Verified user"),
+                            value: tweet.profile.verified,
+                            onChanged: (newValue) {
+                              setState(() {
+                                tweet.profile.verified = newValue!;
+                              });
+                            }),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        const Text("Tweet Content:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.white)),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextField(
+                          controller: contentController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Tweet Content'),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: rtController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  label: Text('Num RT'),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: quotesController,
+                                decoration: const InputDecoration(
+                                  label: Text('Num Quotes'),
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: likesController,
+                                decoration: const InputDecoration(
+                                  label: Text('Num Likes'),
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextField(
+                          controller: twitterClientController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Tweeter Client'),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Date:",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            ElevatedButton(
+                                child: Text("Select Date"),
+                                onPressed: () async {
+                                  DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      //get today's date
+                                      firstDate: DateTime(2000),
+                                      //DateTime.now() - not to allow to choose before today.
+                                      lastDate: DateTime(2101));
+
+                                  if (pickedDate != null) {
+                                    setState(() {
+                                      tweet.date = pickedDate;
+                                    });
+                                  }
+                                }),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        CheckboxListTile(
+                            title: Text("Twitter Circle"),
+                            value: tweet.circle,
+                            onChanged: (newValue) {
+                              setState(() {
+                                tweet.circle = newValue!;
+                              });
+                            }),
+                      ],
+                    ),
                   ),
                 ),
               ],

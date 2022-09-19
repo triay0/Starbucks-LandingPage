@@ -8,6 +8,7 @@ class Tweet {
   String content;
   String translation;
   int numLikes;
+  int numQuotes;
   int numRT;
   DateTime date;
   String platform;
@@ -17,6 +18,7 @@ class Tweet {
       this.content,
       this.translation,
       this.numLikes,
+      this.numQuotes,
       this.numRT,
       this.date,
       this.platform,
