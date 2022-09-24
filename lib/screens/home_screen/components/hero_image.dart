@@ -27,7 +27,7 @@ class HeroImage extends StatelessWidget {
         Positioned(
           bottom: bottom,
           child: Image.asset(
-            'assets/images/ramsai.png',
+            'assets/images/icon.png',
             height: imageHeight,
             width: imageWidth ?? mediaQuery.width * 0.25,
           ),

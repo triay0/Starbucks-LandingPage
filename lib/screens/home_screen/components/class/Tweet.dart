@@ -13,16 +13,24 @@ class Tweet {
   DateTime date;
   String platform;
   bool circle;
+  bool youLiked;
+  bool youRT;
+  Uint8List image;
+  bool isVideo;
 
   Tweet(this.profile,
       this.content,
+      this.image,
       this.translation,
       this.numLikes,
       this.numQuotes,
       this.numRT,
       this.date,
       this.platform,
-      this.circle);
+      this.circle,
+      this.youLiked,
+      this.youRT,
+      this.isVideo);
 }
 
 class Profile {

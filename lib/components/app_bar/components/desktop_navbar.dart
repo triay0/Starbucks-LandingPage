@@ -11,7 +11,7 @@ class DesktopNavbar extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     const height = 100.0;
     return Container(
-      color: Color.fromRGBO(61, 164, 220, 1.0),
+      color: Color.fromRGBO(23, 127, 183, 1.0),
 
       alignment: Alignment.center,
       padding: EdgeInsets.symmetric(

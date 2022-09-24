@@ -10,7 +10,7 @@ class Header extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset('assets/images/logo.png'),
+        Image.asset('assets/images/icon.png', height: 35.0),
         const SizedBox(width: 10.0),
         Image.asset('assets/images/title.png', height: 35.0),
       ],

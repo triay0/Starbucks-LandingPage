@@ -32,23 +32,31 @@ class _DesktopHeroState extends State<DesktopHero> {
   late var twitterClientController = TextEditingController();
 
   late Tweet tweet;
-  late Uint8List webImage;
+  late Uint8List webProfileImage;
+  late Uint8List tweetImage;
+
   int val = 1;
 
   @override
   void initState() {
-    webImage = Uint8List(8);
+    webProfileImage = Uint8List(8);
+    tweetImage = Uint8List(8);
 
     tweet = Tweet(
-        Profile(false, "test", "testNick", File(""), webImage),
+        Profile(false, "test", "testNick", File(""), webProfileImage),
         "Tweet Content #hashtag1",
+        tweetImage,
         "Tweet Content #hashtag1",
         200,
         50,
         400,
         DateTime.now(),
         "Twitter Web",
+        false,
+        false,
+        false,
         false);
+
     rtController.text = "400";
     likesController.text = "50";
     quotesController.text = "200";
@@ -125,6 +133,8 @@ class _DesktopHeroState extends State<DesktopHero> {
                   child: Column(
                     children: [
                       MaterialButton(
+                        padding: EdgeInsets.all(20),
+                        color: Colors.orange,
                         onPressed: () => {
                           screenshotController
                               .capture()
@@ -147,6 +157,7 @@ class _DesktopHeroState extends State<DesktopHero> {
                         },
                         child: Text("Save Tweet"),
                       ),
+                      SizedBox(height: 20,),
                       Screenshot(
                           controller: screenshotController,
                           child: HeroTweet(tweet: tweet)),
@@ -238,7 +249,7 @@ class _DesktopHeroState extends State<DesktopHero> {
                         Row(
                           children: [
                             Text(
-                              "Image:",
+                              "Profile Image:",
                               style: TextStyle(color: Colors.white),
                             ),
                             SizedBox(
@@ -247,7 +258,7 @@ class _DesktopHeroState extends State<DesktopHero> {
                             ElevatedButton(
                                 child: Text("Choose File"),
                                 onPressed: () async {
-                                  _pickImage();
+                                  _pickImage(0);
                                 }),
                           ],
                         ),
@@ -300,10 +311,93 @@ class _DesktopHeroState extends State<DesktopHero> {
                         ),
                         TextField(
                           controller: contentController,
+                          minLines: 3,
+                          maxLines: 6,
+                          maxLength: 280,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             label: Text('Tweet Content'),
                           ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CheckboxListTile(
+                                  title: Text("You RT"),
+                                  value: tweet.youRT,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      tweet.youRT = newValue!;
+                                    });
+                                  }),
+                            ),
+                            Expanded(
+                              child: CheckboxListTile(
+                                  title: Text("You Liked"),
+                                  value: tweet.youLiked,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      tweet.youLiked = newValue!;
+                                    });
+                                  }),
+                            ),
+                          ],
+                        ),
+
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Image:",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            ElevatedButton(
+                                child: Text("Choose File"),
+                                onPressed: () async {
+                                  _pickImage(1);
+                                }),
+                            Visibility(
+                                visible: tweetImage.length != 8,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          print("clearImage");
+                                          tweetImage = Uint8List(8);
+                                          tweet.image = Uint8List(8);
+                                        });
+                                      },
+                                      child: const Text(
+                                        "Clear image",
+                                        style: TextStyle(color: Colors.blue),
+                                      ),
+
+                                    ),
+
+                                  ],
+                                )),
+                            Visibility(
+                              visible: tweetImage.length != 8,
+                              child: Expanded(
+                                child: CheckboxListTile(
+                                    title: Text("Is Video"),
+                                    value: tweet.isVideo,
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        tweet.isVideo = newValue!;
+                                      });
+                                    }),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           height: 10,
@@ -412,7 +506,7 @@ class _DesktopHeroState extends State<DesktopHero> {
     );
   }
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImage(int imageId) async {
     if (!kIsWeb) {
       final ImagePicker _picker = ImagePicker();
       // Pick an image
@@ -422,7 +516,9 @@ class _DesktopHeroState extends State<DesktopHero> {
         var selected = File(image.path);
         setState(() {
           //_pickedImage = selected;
-          tweet.profile.image = selected;
+          if (imageId == 0) {
+            tweet.profile.image = selected;
+          } else if (imageId == 1) {}
         });
       } else {
         print('No image has been picked.');
@@ -435,9 +531,13 @@ class _DesktopHeroState extends State<DesktopHero> {
       if (image != null) {
         var selected = await image.readAsBytes();
         setState(() {
-          webImage = selected;
-          //_pickedImage = File("a");
-          tweet.profile.image2 = webImage;
+          if (imageId == 0) {
+            webProfileImage = selected;
+            tweet.profile.image2 = webProfileImage;
+          } else if (imageId == 1) {
+            tweetImage = selected;
+            tweet.image = selected;
+          }
         });
       }
     }

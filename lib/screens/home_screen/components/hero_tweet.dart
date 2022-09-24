@@ -1,10 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dynamic_text_highlighting/dynamic_text_highlighting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:starbucks_landing_page/screens/home_screen/components/utils.dart';
 
 import 'class/Tweet.dart';
 
@@ -30,9 +30,10 @@ class _HeroTweetState extends State<HeroTweet> {
   Widget build(BuildContext context) {
     //text.children.clear();
 
+    print(widget.tweet.profile.image2);
+
     return Container(
       width: MediaQuery.of(context).size.width * .3,
-      margin: const EdgeInsets.all(15.0),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
@@ -43,7 +44,7 @@ class _HeroTweetState extends State<HeroTweet> {
           children: [
             Row(children: [
               Visibility(
-                visible: widget.tweet.profile.image2 == Uint8List(8),
+                visible: widget.tweet.profile.image2.length == 8,
                 child: Container(
                   width: 48,
                   child: const CircleAvatar(
@@ -53,7 +54,7 @@ class _HeroTweetState extends State<HeroTweet> {
                 ),
               ),
               Visibility(
-                  visible: widget.tweet.profile.image2 != Uint8List(8),
+                  visible: widget.tweet.profile.image2.length != 8,
                   child: Container(
                     width: 48,
                     child: CircleAvatar(
@@ -109,6 +110,32 @@ class _HeroTweetState extends State<HeroTweet> {
               height: 20,
             ),
             buildTweetContent(widget.tweet.content),
+            const SizedBox(
+              height: 10,
+            ),
+            Visibility(
+                visible: widget.tweet.image.length != 8,
+                child: Stack(
+                    // fit: StackFit.loose,
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            // Image border
+                            child: Image.memory(widget.tweet.image)),
+                      ),
+                      Visibility(
+                        visible: widget.tweet.isVideo,
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/play_video.png',
+                            width: 100,
+                            height: 100,
+                          ),
+                        ),
+                      ),
+                    ])),
             const AutoSizeText(
               "Translate Tweet",
               textAlign: TextAlign.start,
@@ -117,14 +144,6 @@ class _HeroTweetState extends State<HeroTweet> {
                 fontSize: 13.0,
                 fontFamily: 'Chirp',
               ),
-            ),
-            Visibility(
-              visible: false,
-              child: MaterialButton(
-                  child: const Text('UPLOAD FILE'),
-                  onPressed: (() {
-                    //_pickImage();
-                  })),
             ),
             Container(
               margin: const EdgeInsets.only(top: 16.0, bottom: 16.0),
@@ -193,7 +212,7 @@ class _HeroTweetState extends State<HeroTweet> {
                     child: Row(
                       children: [
                         Text(
-                          widget.tweet.numLikes.toString(),
+                    Utils.formatNum(widget.tweet.numLikes),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -231,13 +250,15 @@ class _HeroTweetState extends State<HeroTweet> {
                   )),
                   Expanded(
                       child: SvgPicture.asset(
-                    "images/rt.svg",
-                    color: Colors.blueGrey,
+                    widget.tweet.youRT
+                        ? "images/rt_pressed.svg"
+                        : "images/rt.svg",
                   )),
                   Expanded(
                       child: SvgPicture.asset(
-                    "images/vector.svg",
-                    color: Colors.blueGrey,
+                    widget.tweet.youLiked
+                        ? "images/like_pressed.svg"
+                        : "images/like.svg",
                     //semanticsLabel: 'Acme Logo'
                   )),
                   Expanded(
@@ -269,49 +290,38 @@ class _HeroTweetState extends State<HeroTweet> {
           ]),
     );
   }
-}
 
-Widget buildTweetContent(String text) {
-  var pattern = RegExp(
-      "#([A-Za-z0-9_-]+)|@([A-Za-z0-9_-]+)|^(?:https?:\\\\)?(?:www\\.)?[a-zA-Z0-9.]+\$");
+  Widget buildTweetContent(String text) {
+    var pattern = RegExp(
+        "#([A-Za-z0-9_-]+)|@([A-Za-z0-9_-]+)|^(?:https?:\\\\)?(?:www\\.)?[a-zA-Z0-9.]+\$");
 
-  List<InlineSpan> list = [];
+    List<InlineSpan> list = [];
 
-  final words = text.split(' ');
+    final words = text.split(' ');
 
-  final matches = pattern.allMatches(text).map((m) => m.group(0)).toString();
+    final matches = pattern.allMatches(text).map((m) => m.group(0)).toString();
 
-  print("allMatches : $matches");
+    print("allMatches : $matches");
 
-  for (var word in words) {
-    //  print(word);
-    if (matches.contains(word)) {
-      list.add(TextSpan(
-          text: word + " ", style: const TextStyle(color: Colors.blue)));
-    } else {
-      list.add(TextSpan(
-          text: word + " ",
-          style: const TextStyle(fontSize: 23.0, fontFamily: 'Chirp')));
+    for (var word in words) {
+      //  print(word);
+      if (matches.contains(word)) {
+        list.add(TextSpan(
+            text: word + " ", style: const TextStyle(color: Colors.blue)));
+      } else {
+        list.add(TextSpan(
+            text: word + " ",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontFamily: 'Chirp',
+              color: Theme.of(context).textTheme.bodyText1!.color!,
+            )));
+      }
     }
+    var text2 = RichText(
+      text: TextSpan(
+          text: '', style: const TextStyle(fontSize: 20), children: list),
+    );
+    return text2;
   }
-  var text2 = RichText(
-    text: TextSpan(
-        text: '',
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        children: list),
-  );
-  return text2;
-}
-
-Widget buildDTH(String text, List<String> highlights) {
-  return DynamicTextHighlighting(
-    text: text,
-    highlights: highlights,
-    color: Colors.yellow,
-    style: const TextStyle(
-      fontSize: 18.0,
-      fontStyle: FontStyle.italic,
-    ),
-    caseSensitive: false,
-  );
 }
