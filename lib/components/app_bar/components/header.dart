@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Header extends StatelessWidget {
   const Header({
@@ -10,9 +11,14 @@ class Header extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset('assets/images/icon.png', height: 35.0),
+        Image.asset('assets/images/icon.png', height: 100.0),
         const SizedBox(width: 10.0),
-        Image.asset('assets/images/title.png', height: 35.0),
+        Text("TweetGen",
+            style: GoogleFonts.robotoSlab(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
+            ))
       ],
     );
   }

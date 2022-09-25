@@ -19,35 +19,35 @@ class DesktopNavbar extends StatelessWidget {
           horizontal: width > 850 ? (width * 0.07) : (width * 0.05)),
       height: height,
       child: Visibility(
-        visible: false,
+        visible: true,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             //logo
             const Header(),
             //navbar_items
-            const SizedBox(
-              height: 30,
-              child: NavbarItems(),
-            ),
+            //const SizedBox(
+            //  height: 30,
+            //  child: NavbarItems(),
+            //),
 
             //trailing
-            if (width >= 1100)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SearchButton(),
-                  const SizedBox(width: 10.0),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.lock_outline,
-                      color: Colors.black,
-                      size: 25.0,
-                    ),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
+            //if (width >= 1100)
+            //  Row(
+            //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //    children: [
+            //      const SearchButton(),
+            //      const SizedBox(width: 10.0),
+            //      IconButton(
+            //        icon: const Icon(
+            //          Icons.lock_outline,
+            //          color: Colors.black,
+            //          size: 25.0,
+            //        ),
+            //        onPressed: () {},
+            //      ),
+            //    ],
+            //  ),
           ],
         ),
       ),

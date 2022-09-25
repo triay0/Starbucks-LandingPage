@@ -4,8 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:starbucks_landing_page/screens/home_screen/components/theme_changer.dart';
 
 import './screens/screens.dart';
+import 'package:url_strategy/url_strategy.dart';
+
 
 void main() {
+  setPathUrlStrategy();
+
   runApp(
     const MyApp(),
   );
@@ -33,6 +37,7 @@ class MaterialAppWithTheme extends StatelessWidget {
     final theme = Provider.of<ThemeChanger>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: "TweetGen",
       theme: theme.getTheme,
       home: HomeScreen(),
     );

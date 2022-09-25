@@ -85,7 +85,7 @@ class _HeroTweetState extends State<HeroTweet> {
                             margin: const EdgeInsets.only(left: 5),
                             child: SvgPicture.asset(
                               "images/verified.svg",
-                              color: Colors.blue,
+                              color: Theme.of(context).selectedRowColor!,
                             ),
                           ))
                     ],
