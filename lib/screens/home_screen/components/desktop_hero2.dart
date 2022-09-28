@@ -127,7 +127,8 @@ class _DesktopHeroState extends State<DesktopHero> {
           children: [
             const SizedBox(height: 75.0),
             Row(
-              //mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                   child: Column(

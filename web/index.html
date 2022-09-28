@@ -42,5 +42,25 @@
   <script defer src="main.dart.js" type="application/javascript"></script>
 </head>
 <body>
+
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-analytics.js"></script>
+
+<script>
+  var firebaseConfig = {
+    apiKey: "AIzaSyC2Adu8gHjjaC2XPfOzcN_m_xhsNSVreYs",
+    authDomain: "triay0apps.firebaseapp.com",
+    databaseURL: "https://triay0apps.firebaseio.com",
+    projectId: "triay0apps",
+    storageBucket: "triay0apps.appspot.com",
+    messagingSenderId: "991860441795",
+    appId: "1:991860441795:web:18ffc478cd45cf9e7a9876",
+    measurementId: "G-DSBMXNW8HJ"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+  </script>
 </body>
 </html>

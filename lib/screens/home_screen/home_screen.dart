@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              const CustomNavbar(),
+              CustomNavbar(),
               Expanded(child: HeroContent()),
             ],
           ),

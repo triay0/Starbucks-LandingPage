@@ -33,7 +33,7 @@ class _HeroTweetState extends State<HeroTweet> {
     print(widget.tweet.profile.image2);
 
     return Container(
-      width: MediaQuery.of(context).size.width * .3,
+      width: 560,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
           color: Theme.of(context).cardColor,

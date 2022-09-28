@@ -49,6 +49,7 @@ dependencies:
 
   dynamic_text_highlighting:
     git: https://github.com/blakewood84/dynamic_text_highlighting.git
+  firebase_core: ^1.23.0
 
 dev_dependencies:
   flutter_test:

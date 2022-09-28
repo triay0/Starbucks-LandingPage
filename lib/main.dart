@@ -1,4 +1,5 @@
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:starbucks_landing_page/screens/home_screen/components/theme_changer.dart';
@@ -11,12 +12,14 @@ void main() {
   setPathUrlStrategy();
 
   runApp(
-    const MyApp(),
+     MyApp(),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+   MyApp({Key? key}) : super(key: key);
+
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,18 @@ class MyApp extends StatelessWidget {
           create: (_) => ThemeChanger(lightTheme),
         ),
       ],
-      child: MaterialAppWithTheme()
+      child: FutureBuilder(
+          future: _initialization,
+          builder: (context, snapshot){
+            if(snapshot.hasError){
+              print("Error");
+            }
+            if(snapshot.connectionState == ConnectionState.done){
+              return MaterialAppWithTheme();
+            }
+            return CircularProgressIndicator();
+          },
+      )
     );
   }
 }
