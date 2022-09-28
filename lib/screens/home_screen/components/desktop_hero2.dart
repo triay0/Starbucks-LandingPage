@@ -125,9 +125,10 @@ class _DesktopHeroState extends State<DesktopHero> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 75.0),
+            //const SizedBox(height: 75.0),
             Row(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
@@ -165,6 +166,7 @@ class _DesktopHeroState extends State<DesktopHero> {
                     ],
                   ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height*0.05,),
                 Expanded(
                   child: Container(
                     child: Column(
@@ -487,14 +489,17 @@ class _DesktopHeroState extends State<DesktopHero> {
                         const SizedBox(
                           height: 5,
                         ),
-                        CheckboxListTile(
-                            title: Text("Twitter Circle"),
-                            value: tweet.circle,
-                            onChanged: (newValue) {
-                              setState(() {
-                                tweet.circle = newValue!;
-                              });
-                            }),
+                        Visibility(
+                          visible: false,
+                          child: CheckboxListTile(
+                              title: Text("Twitter Circle"),
+                              value: tweet.circle,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  tweet.circle = newValue!;
+                                });
+                              }),
+                        ),
                       ],
                     ),
                   ),
